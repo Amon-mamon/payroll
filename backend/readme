@@ -1,0 +1,63 @@
+
+**Models:**
+- `Employee` — profile, government IDs, salary
+- `Attendance` — date, time in/out, status
+- `LeaveRequest` — type, dates, approval status
+- `PayrollRun` — period, status (draft/review/approved/paid/locked)
+- `Payslip` — employee, run, gross, deductions breakdown, net
+- `DeductionTable` — versioned SSS/PhilHealth/Pag-IBIG/tax brackets
+
+---
+
+## Key Decisions
+
+| Decision | Why |
+|---|---|
+| **Django Groups for roles** (not User subclasses) | Roles are permissions, not types. Avoids migration pain. |
+| **JWT auth** | React SPA + separate backend = simplest. |
+| **Deduction tables in DB** (not hardcoded) | Laws change; old payrolls must stay valid. Insert new row = done. |
+| **Pure Python calculation engine** | Testable against official calculators before any UI work. |
+| **Soft-delete on payroll records** | Legally auditable. Never `DELETE`. |
+| **Lock after approval** | Prevents edits to finalized payroll. |
+
+---
+
+## Critical Rules
+
+1. **Never delete payroll records** — soft-delete only.
+2. **Lock payroll runs after approval** — no edits allowed.
+3. **Audit log every payroll action** (who, what, when).
+4. **Encrypt sensitive fields** (TIN, bank account, SSS number) at rest.
+5. **Backup the database daily.**
+6. **Version deduction tables** — never hardcode rates in views/models.
+7. **Calculation engine must be fully tested** before any UI work.
+
+---
+
+## Build Order
+
+| Phase | Deliverable |
+|---|---|
+| 1 | Project setup (Django + DRF + React + JWT + CORS) |
+| 2 | Employee model + CRUD API |
+| 3 | Attendance model + CRUD |
+| 4 | **Calculation engine (pure Python, unit tested)** |
+| 5 | PayrollRun + Payslip compute endpoint |
+| 6 | Payslip PDF generation |
+| 7 | BIR 1601-C & SSS CCL exports |
+| 8 | React pages (login → dashboard → payroll) |
+| 9 | Roles & permissions |
+| 10 | Deploy + daily backup |
+
+> ⚠️ **Do not skip Phase 4.** If the engine is wrong, nothing else matters.
+
+---
+
+## Tech Stack
+
+- **Backend:** Django 4.2 LTS, DRF, SimpleJWT, django-cors-headers, django-filter
+- **PDF:** WeasyPrint
+- **Excel export:** openpyxl
+- **Frontend:** React 18 + Vite + TailwindCSS + React Router + Axios
+- **Database:** SQLite (dev) / PostgreSQL (prod)
+- **Python:** 3.10+ via pyenv

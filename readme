@@ -1,0 +1,103 @@
+# 💼 Payroll System — Context
+
+## What is this?
+
+An internal payroll management system for a Philippine company.
+
+**Stack:** Django REST Framework (backend) + React (frontend)
+
+**Version:** v1 (MVP)
+
+---
+
+## The Problem
+
+Manual payroll is slow and error-prone:
+
+- Computing SSS, PhilHealth, Pag-IBIG, and withholding tax by hand
+- Tracking attendance and leaves across spreadsheets
+- Generating government reports (BIR 1601-C, SSS CCL) manually
+- No audit trail when something goes wrong
+
+---
+
+## The Goal
+
+Automate the full payroll cycle:
+
+1. HR enters employee records + attendance
+2. System computes gross pay, overtime, and all deductions
+3. Payroll officer reviews and approves
+4. Payslips generate as PDF
+5. Government reports export in required formats
+
+> **v1 success = "Can I run one correct payroll and export government reports?"** Nothing more.
+
+---
+
+## Users
+
+| Role | What they do |
+|---|---|
+| **Admin** | Full access, approve/lock payroll, all reports |
+| **HR** | Employees, attendance, leaves |
+| **Payroll Officer** | Run payroll, payslips, exports |
+| **Employee** | View own payslip, file leave |
+
+---
+
+## Scope (v1)
+
+### ✅ Building
+
+- Employee management (profiles, government IDs, salary)
+- Attendance and leave tracking
+- Payroll computation (gross, overtime, deductions, tax)
+- Payslip PDF generation
+- BIR 1601-C and SSS CCL exports
+- Payroll run lifecycle: draft → compute → approve → **lock**
+- Audit trail on all payroll actions
+- JWT auth with role-based access
+
+### ❌ Not building (v2+)
+
+- Biometric device integration
+- Mobile app
+- Loans (SSS/company)
+- HMO/benefits administration
+- Employee self-service portal
+- Multi-company / multi-currency
+- Accounting software integration
+
+---
+
+## Philippine Compliance Rules
+
+### Employee deductions
+
+| Contribution | Rate | Cap | Max Employee Share |
+|---|---|---|---|
+| SSS | 5% | ₱35,000 MSC | ₱1,750 |
+| PhilHealth | 2.5% | ₱100,000 | ₱2,500 |
+| Pag-IBIG | 2% | ₱10,000 | ₱200 |
+
+### Withholding tax (BIR graduated)
+
+| Annual taxable income | Rate |
+|---|---|
+| ≤ ₱250,000 | 0% |
+| ₱250,001 – ₱400,000 | 20% of excess over ₱250k |
+| ₱400,001 – ₱800,000 | ₱30,000 + 25% of excess over ₱400k |
+| ₱800,001 – ₱2,000,000 | ₱130,000 + 30% of excess over ₱800k |
+| ₱2,000,001 – ₱8,000,000 | ₱490,000 + 32% of excess over ₱2M |
+| > ₱8,000,000 | ₱2,410,000 + 35% of excess over ₱8M |
+
+### Other rules
+
+- **Overtime:** 1.25× regular, 1.3× rest day, 2× regular holiday
+- **13th month pay:** mandatory, first ₱90,000 tax-exempt
+- **De minimis benefits:** non-taxable up to BIR limits
+
+---
+
+## Core Data Model
