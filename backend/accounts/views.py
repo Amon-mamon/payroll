@@ -8,9 +8,12 @@ from .serializers import UserSerializers
     MeView used generics because of what the class do (ONE JOB WHICH IS GET) - SINGLE PURPOSE ENDPOINTS ONLY
     
 """
-class MeView(generics.RetriveAPIView):
+class MeView(generics.RetrieveAPIView):
     serializer_class = UserSerializers
-    permission_classes = [permissions.isAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_object(self):
         return self.request.user
+
+
+    

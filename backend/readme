@@ -1,3 +1,6 @@
+**env activation**
+- pyenv activate payroll-env
+
 
 **Models:**
 - `Employee` — profile, government IDs, salary
