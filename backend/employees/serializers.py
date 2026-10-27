@@ -11,7 +11,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     full_name  = serializers.SerializerMethodField()
     class Meta:
         model = Employee
-        fields = ["id", "user", "employee_no", "first_name", "last_name", "full_name", "position", "department", "hire_date", "employment_type", "basic_salary", "sss_no", "philhealth_no", "pagibig_no", "tin", "bank_account", "created_at","updated_at",]
+        fields = ["id", "user", "employee_no", "first_name", "last_name", "full_name", "position", "department", "hire_date","regularization_date", "employment_type", "basic_salary", "sss_no", "philhealth_no", "pagibig_no", "tin", "bank_account", "created_at","updated_at",]
         read_only_fields = ["id", "created_at", "updated_at"]
     
     """ 

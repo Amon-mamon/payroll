@@ -21,6 +21,7 @@ class Employee(BaseModel):
     position = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     hire_date = models.DateField()
+    regularization_date = models.DateField(null=True, blank=True)
     employment_type = models.CharField(
         max_length=20,
         choices=EmploymentType.choices,

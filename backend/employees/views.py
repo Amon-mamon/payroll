@@ -17,4 +17,4 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     ordering_fields = ["last_name", "hire_date", "basic_salary"]
     
     def perform_destroy(self, instance):
-        instance.soft_delete()
+        instance.soft_delete()  
