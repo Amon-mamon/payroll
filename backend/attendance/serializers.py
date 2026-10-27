@@ -34,6 +34,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 "time_out": "time_out must be after time_in."
             })
+        return attrs
             
     def create(self, validated_data):
         worked, overtime = self._compute_hours(validated_data)
@@ -49,4 +50,3 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
     
     
-        
