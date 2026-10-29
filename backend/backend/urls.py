@@ -23,6 +23,6 @@ urlpatterns = [
     path('api/', include("employees.urls")),
     path('api/', include("attendance.urls")),
     path('api/', include("leaves.urls")),
-    # path('api/', include("payroll.urls")),
+    path('api/', include("payroll.urls")),
     # path('api/reports', include("reports.urrls")),
 ]

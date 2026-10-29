@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['-start_date'],
                 'abstract': False,
-                'constraints': [models.CheckConstraint(condition=models.Q(('end_date__gte', models.F('start_date'))), name='leave_end_after_start')],
+                'constraints': [models.CheckConstraint(check=models.Q(('end_date__gte', models.F('start_date'))), name='leave_end_after_start')],
             },
         ),
         migrations.CreateModel(
