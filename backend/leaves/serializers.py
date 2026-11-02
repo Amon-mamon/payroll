@@ -8,20 +8,33 @@ class LeaveTypeSerializer(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
 class LeaveBalanceSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    leave_type_name = serializers.CharField(source="leave_type.name", read_only=True)
     remaining = serializers.DecimalField(max_digits=6, decimal_places=2, read_only=True)
     
     class Meta:
         model = LeaveBalance
-        fields = ["id", "employee", "leave_type", "year", "allocated", "used", "remaining"]
+        fields = ["id", "employee", "full_name", "remaining", "leave_type_name", "leave_type", "year", "allocated", "used", "remaining"]
         read_only_fields= ["id", "remaining"]
+            
+    def get_full_name(self, obj):
+        # Access via the Employee relation
+        return f"{obj.employee.first_name} {obj.employee.last_name}"
     
 class LeaveRequestSerializer(serializers.ModelSerializer):
-    
+    employee_name = serializers.CharField(source="employee.full_name", read_only=True)
+    leave_type_name = serializers.CharField(source="leave_type.name", read_only=True)
+
     class Meta:
         model = LeaveRequest
-        fields = ["id", "employee", "leave_type", "start_date", "end_date", "days", "reason", "status", "approved_by", "approved_at", "created_at", "updated_at"]
+        fields = [
+            "id", "employee", "employee_name", "leave_type", "leave_type_name",
+            "start_date", "end_date", "days", "reason", "status", 
+            "approved_by", "approved_at", "created_at", "updated_at"
+        ]
         read_only_fields = ["id", "status", "approved_by", "approved_at", "created_at", "updated_at"]
-        
+
+    # ... keep your existing validate method ...
     def validate(self, attrs):
         start_date = attrs.get("start_date")
         end_date = attrs.get("end_date")

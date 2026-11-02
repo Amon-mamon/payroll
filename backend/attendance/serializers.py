@@ -1,26 +1,30 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from rest_framework import serializers
 from .models import Attendance
-
 
 STANDARD_WORK_HOURS = 8
 
 class AttendanceSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Attendance
-        fields = ["id", "employee", "date", "time_in", "time_out", "worked_hours", "overtime_hours", "status", "notes", "created_at", "updated_at"]
+        fields = ["id", "employee", "full_name", "date", "time_in", "time_out", "worked_hours", "overtime_hours", "status", "notes", "created_at", "updated_at"]
         read_only_fields = ["id", "worked_hours", "overtime_hours", "created_at", "updated_at"]
         
+    def get_full_name(self, obj):
+        # Access via the Employee relation
+        return f"{obj.employee.first_name} {obj.employee.last_name}"
     
-    def _compute_hours(self, data):
+    def _compute_hours(self, data): 
         time_in = data.get("time_in")
         time_out = data.get("time_out")
         
         if not (time_in and time_out):
             return 0, 0
         
-        dt_in = datetime.combine(datetime(2000, 1, 1). date(), time_in)
-        dt_out = datetime.combine(datetime(2000, 1, 1). date(), time_out)
+        dt_in = datetime.combine(datetime(2000, 1, 1).date(), time_in)
+        dt_out = datetime.combine(datetime(2000, 1, 1).date(), time_out)
         total_hours = (dt_out - dt_in).total_seconds() / 3600
         
         worked = min(total_hours, STANDARD_WORK_HOURS)
@@ -43,10 +47,12 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return Attendance.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
-        merged = {**instance.__dict__, **validated_data}
-        worked, overtime = self._compute_hours(merged)
+        # Safely fallback to existing instance times if not provided in the update
+        time_in = validated_data.get("time_in", instance.time_in)
+        time_out = validated_data.get("time_out", instance.time_out)
+        
+        worked, overtime = self._compute_hours({"time_in": time_in, "time_out": time_out})
         validated_data["worked_hours"] = worked
         validated_data["overtime_hours"] = overtime
+        
         return super().update(instance, validated_data)
-    
-    

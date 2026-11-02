@@ -1,4 +1,5 @@
 from django.utils import timezone
+from employees.models import Employee
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
@@ -11,7 +12,10 @@ class LeaveTypeViewSet(viewsets.ModelViewSet):
     queryset = LeaveType.objects.filter(is_deleted=False)
     
     serializer_class = LeaveTypeSerializer
-    permission_classes = [permissions.IsAuthenticated, IsHRorAdmin]
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsHRorAdmin()]
+        return [permissions.IsAuthenticated()]
     
     def perform_destroy(self, instance):
         instance.soft_delete()
@@ -19,14 +23,44 @@ class LeaveTypeViewSet(viewsets.ModelViewSet):
 class LeaveBalanceViewSet(viewsets.ModelViewSet):
     queryset = LeaveBalance.objects.filter(is_deleted=False).select_related("employee", "leave_type")
     serializer_class = LeaveBalanceSerializer
-    
     permission_classes = [permissions.IsAuthenticated, IsHRorAdmin]
-    
-    filterset_fields = ["id","employee", "leave_type", "year"]
+    filterset_fields = ["employee", "leave_type", "year"]
     
     def perform_destroy(self, instance):
         instance.soft_delete()
+
+    @action(detail=False, methods=["post"])
+    def generate_yearly(self, request):
+        year = request.data.get("year")
+        if not year:
+            return Response({"detail": "Year is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        employees = Employee.objects.filter(is_deleted=False)
+        leave_types = LeaveType.objects.filter(is_deleted=False)
         
+        created_count = 0
+        skipped_count = 0
+
+        for employee in employees:
+            for lt in leave_types:
+                # Don't create if it already exists
+                balance, created = LeaveBalance.objects.get_or_create(
+                    employee=employee,
+                    leave_type=lt,
+                    year=year,
+                    defaults={
+                        "allocated": lt.default_days_per_year,
+                        "used": 0
+                    }
+                )
+                if created:
+                    created_count += 1
+                else:
+                    skipped_count += 1
+
+        return Response({
+            "detail": f"Generated {created_count} balances. Skipped {skipped_count} existing balances."
+        })
         
 class LeaveRequestViewSet(viewsets.ModelViewSet):
     serializer_class = LeaveRequestSerializer
@@ -90,3 +124,4 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
         ])
         
         return Response(LeaveRequestSerializer(leave_request).data)
+    
