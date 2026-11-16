@@ -6,8 +6,8 @@ SECRET_KEY = 'django-insecure-ys=q(i768x^ak#c*o8y)^af*b8-3jq8d$2-h*6pe0ztdb!7r85
 DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# Relaxed local security controls
-CORS_ALLOW_ALL_ORIGINS = True
+# Only the Vite dev server origins in base.py are allowed. (CORS_ALLOW_ALL_ORIGINS
+# together with credentials would let any site use the refresh cookie.)
 
 # Development SQLite database
 DATABASES = {

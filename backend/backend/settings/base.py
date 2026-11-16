@@ -1,7 +1,13 @@
+from datetime import timedelta
 from pathlib import Path
 
 # Updated: Added .parent because settings file is now inside a nested folder
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -12,6 +18,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
+    'django_filters',
     'corsheaders',
     'accounts',
     'employees',
@@ -20,6 +28,7 @@ INSTALLED_APPS = [
     'payroll',
     'reports',
     'common',
+    'organizations',
 ]
 
 MIDDLEWARE = [
@@ -36,7 +45,7 @@ MIDDLEWARE = [
 #REST FRAMEWORK CONFIGURATION
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "common.authentication.TenantJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
@@ -55,6 +64,10 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ),
     "EXCEPTION_HANDLER": "common.exceptions.custom_exception_handler",
+    "DEFAULT_THROTTLE_RATES": {
+        "auth": "20/minute",
+        "signup": "10/hour",
+    },
 }
 
 ROOT_URLCONF = 'backend.urls'
@@ -94,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 USE_TZ = True
 
@@ -106,3 +119,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # User model
 AUTH_USER_MODEL = "accounts.User"
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "UPDATE_LAST_LOGIN": True,
+}

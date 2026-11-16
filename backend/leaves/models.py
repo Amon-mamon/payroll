@@ -5,13 +5,20 @@ from common.models import BaseModel
 from employees.models import Employee
 
 class LeaveType(BaseModel):
-    name = models.CharField(max_length=50, unique=True)
-    code = models.CharField(max_length=10, unique=True)
+    organization = models.ForeignKey(
+        "organizations.Organization", on_delete=models.PROTECT, null=True, related_name="leave_types"
+    )
+    name = models.CharField(max_length=50)
+    code = models.CharField(max_length=10)
     default_days_per_year = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     is_paid = models.BooleanField(default=True)
     
     class Meta(BaseModel.Meta):
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(fields=["organization", "code"], name="unique_leave_code_per_org"),
+            models.UniqueConstraint(fields=["organization", "name"], name="unique_leave_name_per_org"),
+        ]
         
     def __str__(self):
         return f"{self.code} - {self.name}"

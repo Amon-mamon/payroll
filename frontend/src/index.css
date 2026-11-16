@@ -34,13 +34,13 @@
   --sidebar-foreground: oklch(0.1807 0.0207 239.8394);
   --sidebar-primary: oklch(0.6236 0.1833 147.4139);
   --sidebar-primary-foreground: oklch(0.9813 0.0100 238.5069);
-  --sidebar-accent: oklch(0.6999 0.1796 150.1066);
-  --sidebar-accent-foreground: oklch(0.9813 0.0100 238.5069);
+  --sidebar-accent: oklch(0.9396 0.0204 243.4220);
+  --sidebar-accent-foreground: oklch(0.2791 0.0203 242.6079);
   --sidebar-border: oklch(0.8999 0.0196 240.7516);
   --sidebar-ring: oklch(0.6236 0.1833 147.4139);
-  --font-sans: Space Grotesk, ui-sans-serif, sans-serif, system-ui;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-serif: PT Serif, ui-serif, serif;
-  --font-mono: Space Mono, ui-monospace, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 0.75rem;
   --shadow-x: 0;
   --shadow-y: 1px;
@@ -58,6 +58,13 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
+
+  /* Semantic status colours (used by the vanilla CSS below) */
+  --success: oklch(0.6236 0.1833 147.4139);
+  --warning: oklch(0.7700 0.1600 70.0000);
+  --info: oklch(0.6004 0.1694 249.8812);
+  --danger: oklch(0.6207 0.2306 24.9164);
+  --neutral: oklch(0.6396 0.2105 300.0543);
 }
 
 .dark {
@@ -85,17 +92,17 @@
   --chart-3: oklch(0.7309 0.1840 51.3191);
   --chart-4: oklch(0.6928 0.1956 302.0666);
   --chart-5: oklch(0.6899 0.2008 18.6316);
-  --sidebar: oklch(0.2050 0 0);
-  --sidebar-foreground: oklch(0.9850 0 0);
-  --sidebar-primary: oklch(0.4880 0.2430 264.3760);
-  --sidebar-primary-foreground: oklch(0.9850 0 0);
-  --sidebar-accent: oklch(0.2690 0 0);
-  --sidebar-accent-foreground: oklch(0.9850 0 0);
-  --sidebar-border: oklch(0.2750 0 0);
-  --sidebar-ring: oklch(0.4390 0 0);
-  --font-sans: Space Grotesk, ui-sans-serif, sans-serif, system-ui;
+  --sidebar: oklch(0.1600 0.0200 239.0000);
+  --sidebar-foreground: oklch(0.9513 0.0101 238.5127);
+  --sidebar-primary: oklch(0.7007 0.1804 148.9872);
+  --sidebar-primary-foreground: oklch(0.1004 0.0209 233.5083);
+  --sidebar-accent: oklch(0.2414 0.0196 239.1401);
+  --sidebar-accent-foreground: oklch(0.9513 0.0101 238.5127);
+  --sidebar-border: oklch(0.2791 0.0203 242.6079);
+  --sidebar-ring: oklch(0.7007 0.1804 148.9872);
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-serif: PT Serif, ui-serif, serif;
-  --font-mono: Space Mono, ui-monospace, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 0.625rem;
   --shadow-x: 0;
   --shadow-y: 1px;
@@ -111,6 +118,12 @@
   --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
   --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+  --success: oklch(0.7007 0.1804 148.9872);
+  --warning: oklch(0.8000 0.1500 75.0000);
+  --info: oklch(0.6798 0.1703 250.1921);
+  --danger: oklch(0.6899 0.2008 18.6316);
+  --neutral: oklch(0.6928 0.1956 302.0666);
 }
 
 @theme inline {
@@ -173,4 +186,397 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ==========================================================================
+   App design layer (vanilla CSS on top of the theme tokens above).
+   Kept unlayered on purpose so it wins over component utility classes.
+   ========================================================================== */
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+/* Brand */
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Login side panel */
+.auth-hero {
+  position: relative;
+  overflow: hidden;
+  color: var(--primary-foreground);
+  background:
+    radial-gradient(1200px 600px at 110% -10%, color-mix(in oklch, var(--info) 55%, transparent), transparent 60%),
+    radial-gradient(900px 500px at -20% 120%, color-mix(in oklch, var(--accent) 60%, transparent), transparent 60%),
+    var(--primary);
+}
+.auth-hero .brand-mark {
+  background: var(--primary-foreground);
+  color: var(--primary);
+}
+
+/* Page entrance */
+.page-enter { animation: page-enter 220ms ease-out both; }
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Stat cards: --tone drives the icon colour */
+.stat-card { --tone: var(--primary); }
+.stat-card[data-tone="info"] { --tone: var(--info); }
+.stat-card[data-tone="warning"] { --tone: var(--warning); }
+.stat-card[data-tone="danger"] { --tone: var(--danger); }
+.stat-card[data-tone="neutral"] { --tone: var(--neutral); }
+.stat-card .stat-icon {
+  color: var(--tone);
+  background: color-mix(in oklch, var(--tone) 14%, transparent);
+}
+
+/* Status pills */
+.status-badge {
+  --tone: var(--muted-foreground);
+  color: var(--tone);
+  border-color: color-mix(in oklch, var(--tone) 35%, transparent);
+  background: color-mix(in oklch, var(--tone) 10%, transparent);
+}
+.status-badge[data-status="present"],
+.status-badge[data-status="approved"],
+.status-badge[data-status="paid"],
+.status-badge[data-status="active"] { --tone: var(--success); }
+.status-badge[data-status="late"],
+.status-badge[data-status="pending"],
+.status-badge[data-status="draft"] { --tone: var(--warning); }
+.status-badge[data-status="absent"],
+.status-badge[data-status="rejected"],
+.status-badge[data-status="inactive"] { --tone: var(--danger); }
+.status-badge[data-status="leave"],
+.status-badge[data-status="hr"] { --tone: var(--info); }
+.status-badge[data-status="holiday"],
+.status-badge[data-status="admin"],
+.status-badge[data-status="locked"] { --tone: var(--neutral); }
+
+/* Time clock */
+.clock-card {
+  background:
+    linear-gradient(135deg, color-mix(in oklch, var(--primary) 7%, transparent), transparent 55%),
+    var(--card);
+}
+.clock-display {
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.clock-stat {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--background);
+}
+.clock-stat dt { font-size: 0.75rem; color: var(--muted-foreground); }
+.clock-stat dd { font-weight: 600; font-variant-numeric: tabular-nums; }
+.clock-button { height: 3rem; font-size: 1rem; }
+.clock-button[data-action="out"] {
+  background: var(--danger);
+  color: var(--destructive-foreground);
+}
+.clock-button[data-action="out"]:hover {
+  background: color-mix(in oklch, var(--danger) 85%, black);
+}
+
+/* Leave balance bar */
+.balance-bar {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--muted);
+  overflow: hidden;
+}
+.balance-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 300ms ease;
+}
+
+/* Work-day toggle chips */
+.day-chip {
+  min-width: 3rem;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: var(--background);
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.day-chip:hover { border-color: var(--primary); }
+.day-chip:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.day-chip.is-on {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Payslip net pay highlight */
+.net-pay {
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklch, var(--primary) 30%, transparent);
+}
+
+/* ---- Status badges: subscription states ---- */
+.status-badge[data-status="trialing"] { --tone: var(--info); }
+.status-badge[data-status="cancelling"] { --tone: var(--warning); }
+.status-badge[data-status="expired"] { --tone: var(--danger); }
+
+.balance-bar[data-full] > span { background: var(--danger); }
+
+/* ---- Subscription banner ---- */
+.subscription-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+  background: color-mix(in oklch, var(--info) 12%, var(--background));
+  border-bottom: 1px solid color-mix(in oklch, var(--info) 25%, transparent);
+}
+.subscription-banner[data-state="cancelling"] {
+  background: color-mix(in oklch, var(--warning) 16%, var(--background));
+  border-color: color-mix(in oklch, var(--warning) 30%, transparent);
+}
+
+.welcome-card {
+  background:
+    linear-gradient(120deg, color-mix(in oklch, var(--primary) 10%, transparent), transparent 60%),
+    var(--card);
+}
+
+/* ==========================================================================
+   Marketing site
+   ========================================================================== */
+html { scroll-behavior: smooth; }
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.hero-bg {
+  background:
+    radial-gradient(800px 400px at 85% 0%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 70%),
+    radial-gradient(600px 300px at 0% 100%, color-mix(in oklch, var(--info) 10%, transparent), transparent 70%);
+}
+
+.preview-frame {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--muted);
+  box-shadow: 0 30px 60px -30px color-mix(in oklch, var(--foreground) 35%, transparent);
+  overflow: hidden;
+}
+.preview-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.preview-bar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--border);
+}
+.preview-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--card);
+  transition: border-color 150ms, transform 150ms;
+}
+.feature-card:hover {
+  border-color: color-mix(in oklch, var(--primary) 45%, var(--border));
+  transform: translateY(-2px);
+}
+.feature-icon {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 12%, transparent);
+}
+
+.step-number {
+  display: inline-flex;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+/* Pricing */
+.cycle-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--muted);
+  border: 1px solid var(--border);
+}
+.cycle-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.cycle-toggle button.is-on {
+  color: var(--foreground);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+.cycle-save {
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 14%, transparent);
+}
+.auth-hero .cycle-toggle { background: color-mix(in oklch, white 15%, transparent); border-color: transparent; }
+.auth-hero .cycle-toggle button { color: color-mix(in oklch, var(--primary-foreground) 80%, transparent); }
+.auth-hero .cycle-toggle button.is-on { color: var(--primary); background: var(--primary-foreground); }
+.auth-hero .cycle-save { color: inherit; }
+
+.plan-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 6px);
+  background: var(--card);
+}
+.plan-card.is-featured {
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px -24px color-mix(in oklch, var(--primary) 60%, transparent);
+}
+.plan-card.is-selected { outline: 2px solid var(--primary); outline-offset: 2px; }
+.plan-ribbon {
+  position: absolute;
+  top: -0.75rem;
+  left: 1.75rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+/* Signup plan radio rows (sit on the green auth panel) */
+.plan-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid color-mix(in oklch, white 30%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in oklch, white 8%, transparent);
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms;
+}
+.plan-option:hover { background: color-mix(in oklch, white 15%, transparent); }
+.plan-option.is-on {
+  border-color: var(--primary-foreground);
+  background: color-mix(in oklch, white 22%, transparent);
+}
+.plan-option-dot {
+  display: inline-flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+}
+.plan-option.is-on .plan-option-dot { background: var(--primary-foreground); color: var(--primary); border-color: var(--primary-foreground); }
+
+/* FAQ */
+.faq-item {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+.faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; color: var(--muted-foreground); font-size: 1.25rem; line-height: 1; }
+.faq-item[open] summary::after { content: "−"; }
+
+.cta-band {
+  border-radius: calc(var(--radius) + 10px);
+  color: var(--primary-foreground);
+  background:
+    radial-gradient(600px 300px at 100% 0%, color-mix(in oklch, var(--info) 45%, transparent), transparent 70%),
+    var(--primary);
 }

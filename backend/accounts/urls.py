@@ -1,13 +1,14 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.routers import DefaultRouter
 
-from .views import MeView, UserListView
+from .views import CookieLoginView, CookieRefreshView, LogoutView, MeView, UserViewSet
 
-#use path for MeView generic views, no other action needed
+router = DefaultRouter()
+router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
-    path("users/", UserListView.as_view(), name="user-list"),
-    path("login/", TokenObtainPairView.as_view(), name="login"),
-    path("refresh/", TokenRefreshView.as_view(), name="refresh"),
+    path("login/", CookieLoginView.as_view(), name="login"),
+    path("refresh/", CookieRefreshView.as_view(), name="refresh"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("me/", MeView.as_view(), name="me"),
-]
+] + router.urls

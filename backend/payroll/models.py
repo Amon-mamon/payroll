@@ -29,6 +29,9 @@ class PayrollRun(BaseModel):
         ("paid", "Paid"),
         ("locked", "Locked"),
     ]
+    organization = models.ForeignKey(
+        "organizations.Organization", on_delete=models.PROTECT, null=True, related_name="payroll_runs"
+    )
     period_start = models.DateField()
     period_end = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="draft")
@@ -53,9 +56,16 @@ class Payslip(BaseModel):
     payroll_run = models.ForeignKey(PayrollRun, on_delete=models.CASCADE, related_name="payslips")
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name="payslips")
     
+    # Attendance summary for the period
+    days_present = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    days_on_leave = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    days_absent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    overtime_hours = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
     # Earnings
     basic_pay = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     overtime_pay = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    absence_deduction = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     gross_pay = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     
     # Deductions
